@@ -56,7 +56,7 @@ async def patch_film(film_id: int, film_body: FilmPatchModel) -> FilmModel | Err
     Заменить часть информации об одном конкретном фильме
     """
     async with make_session() as session:
-        query = update(Film).where(Film.id == film_body.id)\
+        query = update(Film).where(Film.id == film_id)\
             .values(**film_body.get_values())
         await session.execute(query)
         await session.commit()

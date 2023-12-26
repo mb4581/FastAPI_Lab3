@@ -12,14 +12,10 @@ app.include_router(films_router)
 
 @app.on_event("startup")
 async def startup_event():
+    # Создание таблиц в БД
     await create_tables()
 
 
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
-
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}

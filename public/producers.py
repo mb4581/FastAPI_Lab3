@@ -47,7 +47,7 @@ async def override_producer(producer_id: int, producer_body: ProducerCreateModel
             .values(**producer_body.model_dump())
         await session.execute(query)
         await session.commit()
-    return await get_producer(producer_body.id)
+    return await get_producer(producer_id)
 
 
 @producers_router.patch('/{{producer_id}}')
