@@ -1,6 +1,8 @@
 import os
+from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
+from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
@@ -24,3 +26,10 @@ make_session = sessionmaker(
 async def create_tables():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+
+@asynccontextmanager
+async def create_tables_at_start(_: FastAPI):
+    # Создание таблиц в БД
+    await create_tables()
+    yield
