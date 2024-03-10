@@ -31,7 +31,7 @@ def set_db_url(url: str):
     _DbConfig.url = url
 
 
-def get_alembic_config(db_url: str) -> AlembicConfig:
+def get_alembic_config(db_url: str = db_engine_url) -> AlembicConfig:
     """
     Генерирует конфиг для Alembic на основе имеющегося файла настроек и данного URL бд
     :param db_url:

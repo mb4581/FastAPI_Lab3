@@ -12,12 +12,20 @@ def anyio_backend():
 
 
 @pytest.fixture(scope="session")
-async def migrated_temp_db():
+async def temp_db():
     async with use_temp_database(config.db_engine_url) as temp_db_url:
-        alembic_config = get_alembic_config(temp_db_url)
-
-        upgrade(alembic_config, "head")
         yield temp_db_url
+
+
+@pytest.fixture(scope="session")
+def alembic_config(temp_db):
+    yield get_alembic_config(temp_db)
+
+
+@pytest.fixture(scope="session")
+async def migrated_temp_db(alembic_config):
+    upgrade(alembic_config, "head")
+    yield alembic_config.get_main_option("sqlalchemy.url")
 
 
 @pytest.fixture(scope="session")
