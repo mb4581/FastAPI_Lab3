@@ -23,7 +23,7 @@ async def list_all_producers() -> list[ProducerModel]:
     return out
 
 
-@producers_router.get('/{{producer_id}}')
+@producers_router.get('/{producer_id}')
 async def get_producer(producer_id: int) -> ProducerModel | ErrorModel:
     """
     Получить информацию об одном конкретном продюсере
@@ -37,7 +37,7 @@ async def get_producer(producer_id: int) -> ProducerModel | ErrorModel:
             return ErrorModel(error="Producer doesn't exist")
 
 
-@producers_router.put('/{{producer_id}}')
+@producers_router.put('/{producer_id}')
 async def override_producer(producer_id: int, producer_body: ProducerCreateModel) -> ProducerModel | ErrorModel:
     """
     Заменить информацию об одном конкретном продюсере
@@ -50,7 +50,7 @@ async def override_producer(producer_id: int, producer_body: ProducerCreateModel
     return await get_producer(producer_id)
 
 
-@producers_router.patch('/{{producer_id}}')
+@producers_router.patch('/{producer_id}')
 async def patch_producer(producer_id: int, producer_body: ProducerPatchModel) -> ProducerModel | ErrorModel:
     """
     Заменить часть информации об одном конкретном продюсере
@@ -77,7 +77,7 @@ async def create_producer(producer_model: ProducerCreateModel) -> ProducerModel 
                              last_name=producer.last_name)
 
 
-@producers_router.delete('/{{producer_id}}')
+@producers_router.delete('/{producer_id}')
 async def delete_producer(producer_id: int) -> SuccessModel | ErrorModel:
     """
     Удаляет продюсера

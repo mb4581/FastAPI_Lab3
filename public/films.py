@@ -23,7 +23,7 @@ async def list_all_films() -> list[FilmModel]:
     return out
 
 
-@films_router.get('/{{film_id}}')
+@films_router.get('/{film_id}')
 async def get_film(film_id: int) -> FilmModel | ErrorModel:
     """
     Получить информацию об одном конкретном фильме
@@ -37,7 +37,7 @@ async def get_film(film_id: int) -> FilmModel | ErrorModel:
             return ErrorModel(error="Film doesn't exist")
 
 
-@films_router.put('/{{film_id}}')
+@films_router.put('/{film_id}')
 async def override_film(film_id: int, film_body: FilmCreationModel) -> FilmModel | ErrorModel:
     """
     Заменить информацию об одном конкретном фильме
@@ -50,7 +50,7 @@ async def override_film(film_id: int, film_body: FilmCreationModel) -> FilmModel
     return await get_film(film_id)
 
 
-@films_router.patch('/{{film_id}}')
+@films_router.patch('/{film_id}')
 async def patch_film(film_id: int, film_body: FilmPatchModel) -> FilmModel | ErrorModel:
     """
     Заменить часть информации об одном конкретном фильме
@@ -75,7 +75,7 @@ async def create_film(film_model: FilmCreationModel) -> FilmModel | ErrorModel:
     return await get_film(film.id)
 
 
-@films_router.delete('/{{film_id}}')
+@films_router.delete('/{film_id}')
 async def delete_film(film_id: int) -> SuccessModel | ErrorModel:
     """
     Удаляет фильм
