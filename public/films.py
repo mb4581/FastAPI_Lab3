@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Response
 from sqlalchemy import select, update, delete
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.exc import NoResultFound, IntegrityError
 
 from db import make_session
 from models.common import ErrorModel, SuccessModel
@@ -70,9 +70,13 @@ async def create_film(film_model: FilmCreationModel, response: Response) -> Film
     Добавить новый фильм
     """
     async with make_session() as session:
-        film = Film(**film_model.model_dump())
-        session.add(film)
-        await session.commit()
+        try:
+            film = Film(**film_model.model_dump())
+            session.add(film)
+            await session.commit()
+        except IntegrityError:
+            response.status_code = 400
+            return ErrorModel(error="Producer doesn't exist")
     return await get_film(film.id, response)
 
 

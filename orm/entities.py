@@ -21,7 +21,9 @@ class Film(Base):
     __tablename__ = 'films'
     id = Column(Integer, primary_key=True, autoincrement=True)
     producer_id = Column(Integer, ForeignKey("producers.id"), nullable=False)
+
     title = Column(String, nullable=False)
+    summary = Column(String, default="")
     year = Column(Integer, nullable=False)
 
     producer = relationship("Producer",

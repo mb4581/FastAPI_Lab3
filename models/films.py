@@ -8,6 +8,7 @@ from models.producer import ProducerModel
 class FilmCreationModel(BaseModel):
     producer_id: int
     title: str
+    summary: Optional[str] = Field("")
     year: int
 
 
@@ -15,12 +16,14 @@ class FilmModel(BaseModel):
     id: int
     producer: ProducerModel
     title: str
+    summary: Optional[str] = Field("")
     year: int
 
 
 class FilmPatchModel(BaseModel):
     producer_id: Optional[int] = Field(None)
     title: Optional[str] = Field(None)
+    summary: Optional[str] = Field(None)
     year: Optional[int] = Field(None)
 
     def get_values(self):
