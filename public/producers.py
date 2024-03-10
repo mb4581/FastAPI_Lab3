@@ -39,7 +39,7 @@ async def get_producer(producer_id: int, response: Response) -> ProducerModel | 
 
 
 @producers_router.put('/{producer_id}')
-async def override_producer(producer_id: int, producer_body: ProducerCreateModel) -> ProducerModel | ErrorModel:
+async def override_producer(producer_id: int, producer_body: ProducerCreateModel, response: Response) -> ProducerModel | ErrorModel:
     """
     Заменить информацию об одном конкретном продюсере
     """
@@ -48,11 +48,11 @@ async def override_producer(producer_id: int, producer_body: ProducerCreateModel
             .values(**producer_body.model_dump())
         await session.execute(query)
         await session.commit()
-    return await get_producer(producer_id)
+    return await get_producer(producer_id, response)
 
 
 @producers_router.patch('/{producer_id}')
-async def patch_producer(producer_id: int, producer_body: ProducerPatchModel) -> ProducerModel | ErrorModel:
+async def patch_producer(producer_id: int, producer_body: ProducerPatchModel, response: Response) -> ProducerModel | ErrorModel:
     """
     Заменить часть информации об одном конкретном продюсере
     """
@@ -61,7 +61,7 @@ async def patch_producer(producer_id: int, producer_body: ProducerPatchModel) ->
             .values(**producer_body.get_values())
         await session.execute(query)
         await session.commit()
-    return await get_producer(producer_id)
+    return await get_producer(producer_id, response)
 
 
 @producers_router.post('/')

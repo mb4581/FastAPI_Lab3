@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
 from sqlalchemy import select, update, delete
 from sqlalchemy.exc import NoResultFound
 
@@ -24,7 +24,7 @@ async def list_all_films() -> list[FilmModel]:
 
 
 @films_router.get('/{film_id}')
-async def get_film(film_id: int) -> FilmModel | ErrorModel:
+async def get_film(film_id: int, response: Response) -> FilmModel | ErrorModel:
     """
     Получить информацию об одном конкретном фильме
     """
@@ -34,11 +34,12 @@ async def get_film(film_id: int) -> FilmModel | ErrorModel:
         try:
             return selection.scalar_one()
         except NoResultFound:
+            response.status_code = 404
             return ErrorModel(error="Film doesn't exist")
 
 
 @films_router.put('/{film_id}')
-async def override_film(film_id: int, film_body: FilmCreationModel) -> FilmModel | ErrorModel:
+async def override_film(film_id: int, film_body: FilmCreationModel, response: Response) -> FilmModel | ErrorModel:
     """
     Заменить информацию об одном конкретном фильме
     """
@@ -47,11 +48,11 @@ async def override_film(film_id: int, film_body: FilmCreationModel) -> FilmModel
             .values(**film_body.model_dump())
         await session.execute(query)
         await session.commit()
-    return await get_film(film_id)
+    return await get_film(film_id, response)
 
 
 @films_router.patch('/{film_id}')
-async def patch_film(film_id: int, film_body: FilmPatchModel) -> FilmModel | ErrorModel:
+async def patch_film(film_id: int, film_body: FilmPatchModel, response: Response) -> FilmModel | ErrorModel:
     """
     Заменить часть информации об одном конкретном фильме
     """
@@ -60,11 +61,11 @@ async def patch_film(film_id: int, film_body: FilmPatchModel) -> FilmModel | Err
             .values(**film_body.get_values())
         await session.execute(query)
         await session.commit()
-    return await get_film(film_id)
+    return await get_film(film_id, response)
 
 
 @films_router.post('/')
-async def create_film(film_model: FilmCreationModel) -> FilmModel | ErrorModel:
+async def create_film(film_model: FilmCreationModel, response: Response) -> FilmModel | ErrorModel:
     """
     Добавить новый фильм
     """
@@ -72,7 +73,7 @@ async def create_film(film_model: FilmCreationModel) -> FilmModel | ErrorModel:
         film = Film(**film_model.model_dump())
         session.add(film)
         await session.commit()
-    return await get_film(film.id)
+    return await get_film(film.id, response)
 
 
 @films_router.delete('/{film_id}')
