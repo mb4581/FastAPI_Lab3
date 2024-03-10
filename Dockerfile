@@ -1,13 +1,17 @@
 FROM python:3.11-alpine3.19
 
-# Install python dependencies
-COPY ./requirements.txt /
-RUN pip install -r requirements.txt \
- && rm /requirements.txt
+# curl required for entrypoint script
+RUN apk add --no-cache curl
+
+# python dependencies
+COPY requirements.txt /
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -r /requirements.txt
 
 # Copy app data
 COPY . /app
 WORKDIR /app
 
 # Launch command
-CMD ["uvicorn", "--host", "0.0.0.0", "main:app"]
+CMD ["sh", "/app/docker-entrypoint.sh"]
+

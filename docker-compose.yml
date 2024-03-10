@@ -7,7 +7,7 @@ services:
     ports:
       - "8000:8000"
     links:
-      - db
+      - postgres
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -15,10 +15,9 @@ services:
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
 
-  db:
+  postgres:
     image: postgres:latest
     hostname: postgres
-    network_mode: host # для удобства отладки
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
