@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from sqlalchemy import select, update
+from sqlalchemy import select, update, delete
 from sqlalchemy.exc import NoResultFound
 
 from db import make_session
@@ -81,12 +81,7 @@ async def delete_film(film_id: int) -> SuccessModel | ErrorModel:
     Удаляет фильм
     """
     async with make_session() as session:
-        query = select(Film).where(Film.id == film_id)
-        selection = await session.execute(query)
-        try:
-            entry = selection.scalar_one()              # type: Film
-            await session.delete(entry)
-            await session.commit()
-            return SuccessModel(success=True)
-        except NoResultFound:
-            return ErrorModel(error="Film doesn't exist")
+        query = delete(Film).where(Film.id == film_id)
+        await session.execute(query)
+        await session.commit()
+        return SuccessModel(success=True)

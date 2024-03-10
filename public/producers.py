@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
 from sqlalchemy import select, update, delete
 from sqlalchemy.exc import NoResultFound, IntegrityError
 
@@ -24,7 +24,7 @@ async def list_all_producers() -> list[ProducerModel]:
 
 
 @producers_router.get('/{producer_id}')
-async def get_producer(producer_id: int) -> ProducerModel | ErrorModel:
+async def get_producer(producer_id: int, response: Response) -> ProducerModel | ErrorModel:
     """
     Получить информацию об одном конкретном продюсере
     """
@@ -34,6 +34,7 @@ async def get_producer(producer_id: int) -> ProducerModel | ErrorModel:
         try:
             return selection.scalar_one()
         except NoResultFound:
+            response.status_code = 404
             return ErrorModel(error="Producer doesn't exist")
 
 
@@ -78,19 +79,16 @@ async def create_producer(producer_model: ProducerCreateModel) -> ProducerModel 
 
 
 @producers_router.delete('/{producer_id}')
-async def delete_producer(producer_id: int) -> SuccessModel | ErrorModel:
+async def delete_producer(producer_id: int, response: Response) -> SuccessModel | ErrorModel:
     """
     Удаляет продюсера
     """
     async with make_session() as session:
-        query = select(Producer).where(Producer.id == producer_id)
-        selection = await session.execute(query)
         try:
-            entry = selection.scalar_one()              # type: Producer
-            await session.delete(entry)
+            query = delete(Producer).where(Producer.id == producer_id)
+            await session.execute(query)
             await session.commit()
             return SuccessModel(success=True)
-        except NoResultFound:
-            return ErrorModel(error="Producer doesn't exist")
         except IntegrityError:
+            response.status_code = 400
             return ErrorModel(error="Producer is used in some films and can't de deleted")
