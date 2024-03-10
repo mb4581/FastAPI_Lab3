@@ -1,23 +1,13 @@
-import os
 from contextlib import asynccontextmanager
 
-from dotenv import load_dotenv
 from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
+from config import db_engine_url
 from orm.entities import Base
 
-load_dotenv()
-
-_pg_user = os.environ.get('POSTGRES_USER')
-_pg_pass = os.environ.get('POSTGRES_PASSWORD')
-_pg_host = os.environ.get('POSTGRES_HOST')
-_pg_db = os.environ.get('POSTGRES_DB')
-_pg_port = os.environ.get("POSTGRES_PORT")
-
-engine = create_async_engine(f"postgresql+asyncpg://{_pg_user}:{_pg_pass}@{_pg_host}:{_pg_port}/{_pg_db}")
-
+engine = create_async_engine(db_engine_url)
 make_session = sessionmaker(
     engine, expire_on_commit=False, class_=AsyncSession
 )

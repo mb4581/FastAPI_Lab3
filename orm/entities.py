@@ -24,4 +24,6 @@ class Film(Base):
     title = Column(String, nullable=False)
     year = Column(Integer, nullable=False)
 
-    producer = relationship("Producer", foreign_keys="Film.producer_id", lazy="joined")
+    producer = relationship("Producer",
+                            foreign_keys="Film.producer_id",
+                            lazy="joined")
